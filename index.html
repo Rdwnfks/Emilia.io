@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Emilia Tengil Batu</title>
+    <meta name="application-name" content="Emilia Tengil Batu">
+    <meta name="description" content="Aplikasi absensi, voucher, keuangan, rekap, dan tabungan Emilia Tengil Batu.">
     <meta name="theme-color" content="#be123c">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Emilia Tengil Batu">
-    <link rel="manifest" href="./manifest.webmanifest">
-    <link rel="apple-touch-icon" href="./icons/icon-192.png">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icons/icon-180.png">
     
     <script>
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -23,8 +25,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="./supabase-config.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -90,67 +90,14 @@
         .dark .nav-item.active svg { stroke: #c4b5fd; fill: rgba(109, 40, 217, 0.35); }
         
         select { -webkit-appearance: none; appearance: none; }
-        #auth-screen { backdrop-filter: blur(10px); }
-        .auth-loading { pointer-events:none; opacity:.7; }
         .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
         .mb-safe { margin-bottom: env(safe-area-inset-bottom); }
     </style>
 </head>
 <body class="text-gray-800 dark:text-slate-100 antialiased h-[100dvh] w-full flex justify-center overflow-hidden transition-colors duration-300">
 
-    <!-- Authentication Screen -->
-    <div id="auth-screen" class="fixed inset-0 z-[200] bg-bloom-bg dark:bg-slate-900 flex items-center justify-center p-5 overflow-y-auto">
-        <div class="w-full max-w-md">
-            <div class="text-center mb-6">
-                <div class="mx-auto w-20 h-20 rounded-[28px] bg-bloom-pink/50 dark:bg-pink-900/30 flex items-center justify-center text-4xl shadow-soft mb-4">🌸</div>
-                <h1 class="text-2xl font-black text-bloom-pinkText dark:text-pink-400">Emilia Tengil Batu</h1>
-                <p class="text-sm font-semibold text-gray-500 dark:text-slate-400 mt-1">Login untuk menyimpan data di akunmu</p>
-            </div>
-
-            <div class="bg-white dark:bg-slate-800 rounded-[28px] p-6 shadow-soft dark:shadow-soft-dark border border-gray-100 dark:border-slate-700">
-                <div id="auth-error" class="hidden mb-4 rounded-2xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 text-red-600 dark:text-red-300 p-3 text-xs font-bold"></div>
-                <div id="auth-success" class="hidden mb-4 rounded-2xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/40 text-emerald-600 dark:text-emerald-300 p-3 text-xs font-bold"></div>
-
-                <form id="login-form" class="space-y-4" onsubmit="handleLogin(event)">
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-widest font-black text-gray-500 dark:text-slate-400 mb-2">Email</label>
-                        <input id="login-email" type="email" autocomplete="email" required placeholder="nama@email.com" class="w-full bg-gray-50 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded-2xl p-4 text-sm font-bold outline-none focus:border-bloom-pinkText dark:focus:border-pink-500 text-gray-800 dark:text-white">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-widest font-black text-gray-500 dark:text-slate-400 mb-2">Password</label>
-                        <input id="login-password" type="password" autocomplete="current-password" required minlength="6" placeholder="Minimal 6 karakter" class="w-full bg-gray-50 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded-2xl p-4 text-sm font-bold outline-none focus:border-bloom-pinkText dark:focus:border-pink-500 text-gray-800 dark:text-white">
-                    </div>
-                    <button id="login-button" type="submit" class="w-full bg-bloom-pinkText dark:bg-pink-600 text-white font-black py-4 rounded-2xl shadow-md active:scale-95 transition-transform">Masuk</button>
-                </form>
-
-                <form id="signup-form" class="space-y-4 hidden" onsubmit="handleSignup(event)">
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-widest font-black text-gray-500 dark:text-slate-400 mb-2">Email</label>
-                        <input id="signup-email" type="email" autocomplete="email" required placeholder="nama@email.com" class="w-full bg-gray-50 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded-2xl p-4 text-sm font-bold outline-none focus:border-bloom-pinkText dark:focus:border-pink-500 text-gray-800 dark:text-white">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-widest font-black text-gray-500 dark:text-slate-400 mb-2">Password</label>
-                        <input id="signup-password" type="password" autocomplete="new-password" required minlength="6" placeholder="Minimal 6 karakter" class="w-full bg-gray-50 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded-2xl p-4 text-sm font-bold outline-none focus:border-bloom-pinkText dark:focus:border-pink-500 text-gray-800 dark:text-white">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-widest font-black text-gray-500 dark:text-slate-400 mb-2">Ulangi Password</label>
-                        <input id="signup-password2" type="password" autocomplete="new-password" required minlength="6" placeholder="Ulangi password" class="w-full bg-gray-50 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded-2xl p-4 text-sm font-bold outline-none focus:border-bloom-pinkText dark:focus:border-pink-500 text-gray-800 dark:text-white">
-                    </div>
-                    <button id="signup-button" type="submit" class="w-full bg-bloom-mintText dark:bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-md active:scale-95 transition-transform">Buat Akun</button>
-                </form>
-
-                <div class="flex items-center gap-3 my-5">
-                    <div class="h-px bg-gray-200 dark:bg-slate-700 flex-1"></div><span class="text-[10px] font-bold text-gray-400">ATAU</span><div class="h-px bg-gray-200 dark:bg-slate-700 flex-1"></div>
-                </div>
-                <button id="auth-toggle" type="button" onclick="toggleAuthMode()" class="w-full bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-slate-200 font-bold py-3.5 rounded-2xl text-xs border border-gray-200 dark:border-slate-600">Belum punya akun? Daftar</button>
-                <button id="forgot-button" type="button" onclick="handleForgotPassword()" class="w-full mt-3 text-bloom-pinkText dark:text-pink-400 font-bold py-2 text-xs">Lupa password?</button>
-            </div>
-            <p class="text-center text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-5">Data aplikasi dipisahkan berdasarkan akun.</p>
-        </div>
-    </div>
-
     <!-- App Container: Fixed width on desktop, full width on mobile -->
-    <div id="app-container" class="hidden w-full max-w-md h-full flex flex-col relative bg-bloom-bg dark:bg-slate-900 shadow-2xl sm:border-x sm:border-gray-200 dark:sm:border-slate-800 overflow-hidden transition-colors duration-300">
+    <div class="w-full max-w-md h-full flex flex-col relative bg-bloom-bg dark:bg-slate-900 shadow-2xl sm:border-x sm:border-gray-200 dark:sm:border-slate-800 overflow-hidden transition-colors duration-300">
         
         <!-- Header -->
         <header class="pt-[max(1.5rem,env(safe-area-inset-top))] pb-4 px-6 bg-white dark:bg-slate-800 shadow-sm z-20 flex justify-between items-center transition-colors duration-300 flex-shrink-0">
@@ -383,14 +330,18 @@
                 </div>
                 
                 <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-soft dark:shadow-soft-dark border border-gray-100 dark:border-slate-700">
-                    <div class="flex items-center justify-between gap-3 mb-3">
-                        <div class="min-w-0">
-                            <p class="text-[10px] uppercase tracking-widest font-black text-gray-400 dark:text-slate-500">Akun</p>
-                            <p id="account-email" class="font-bold text-sm text-gray-800 dark:text-white truncate">-</p>
+                    <div class="flex items-center justify-between gap-3">
+                        <div>
+                            <p class="font-bold text-sm text-gray-800 dark:text-white">Aplikasi & Penyimpanan</p>
+                            <p id="pwa-storage-status" class="text-[10px] font-semibold text-gray-500 dark:text-slate-400 mt-1">Menyiapkan penyimpanan aman…</p>
                         </div>
-                        <span class="text-[10px] font-black px-3 py-1.5 rounded-full bg-bloom-mint/30 dark:bg-emerald-900/40 text-bloom-mintText dark:text-emerald-400">ONLINE</span>
+                        <span id="pwa-status-badge" class="text-[9px] font-black px-2.5 py-1 rounded-full bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-300">LOCAL</span>
                     </div>
-                    <button onclick="logout()" class="w-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-bold py-3.5 rounded-xl text-xs border border-red-200 dark:border-red-800/30 active:scale-95 transition-transform">Keluar dari Akun</button>
+                    <div class="grid grid-cols-2 gap-2 mt-4">
+                        <button id="pwa-install-btn" onclick="installPWA()" class="bg-bloom-pinkText text-white font-bold py-3 rounded-xl text-xs active:scale-95 transition-transform">Install Aplikasi</button>
+                        <button onclick="requestPersistentStorage()" class="bg-bloom-blue/10 dark:bg-slate-700/60 text-bloom-blueText dark:text-blue-400 font-bold py-3 rounded-xl text-xs border border-bloom-blue/20 dark:border-blue-800">Amankan Penyimpanan</button>
+                    </div>
+                    <p class="text-[9px] text-gray-400 dark:text-slate-500 mt-3 leading-relaxed">Data tersimpan di perangkat ini. Untuk memindahkan data ke iPhone, Android, atau PC lain gunakan Backup/Restore.</p>
                 </div>
 
                 <button onclick="toggleTheme()" class="w-full bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-soft dark:shadow-soft-dark border border-gray-100 dark:border-slate-700 flex items-center justify-between active:scale-95 transition-transform">
@@ -650,47 +601,81 @@
         const TARGET_DAYS = 18;
         const WORKDAY_STATUSES = ['Masuk', 'Piket', 'Telat'];
         const ACTIVE_STATUSES = ['Masuk', 'Piket', 'Telat', 'Kunjungan'];
-        const KARAOKE_MULTIPLIER = 2;
+        const KARAOKE_MULTIPLIER = 2; // 1 voucher karaoke = +2 voucher
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        let currentUser = null;
-        let authInitialized = false;
+        // Kompatibel data lama: toggle karaoke (true) = 1 voucher karaoke (+2)
+        function getKaraokeCount(record) {
+            if (record.karaokeCount !== undefined) return Math.max(0, parseInt(record.karaokeCount) || 0);
+            return record.karaoke ? 1 : 0;
+        }
+        function escapeHtml(str) {
+            return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
+        
         let db = {
             version: 5,
-            attendance: {},
-            transactions: [],
+            attendance: {}, 
+            transactions: [], 
             manualPenalties: [],
-            monthStatus: {}
+            monthStatus: {} 
         };
 
         let currentCalendarDate = new Date();
         let currentTabunganDate = new Date();
         let dialogConfirmCallback = null;
 
-        function getUserStorageKey() {
-            return currentUser ? `${DB_KEY}:${currentUser.id}` : DB_KEY;
+        const IDB_NAME = 'emilia-tengil-batu-db';
+        const IDB_STORE = 'app';
+        const IDB_KEY = 'database';
+        let deferredInstallPrompt = null;
+
+        function openAppDB() {
+            return new Promise((resolve, reject) => {
+                if (!('indexedDB' in window)) return reject(new Error('IndexedDB tidak tersedia'));
+                const req = indexedDB.open(IDB_NAME, 1);
+                req.onupgradeneeded = () => {
+                    const idb = req.result;
+                    if (!idb.objectStoreNames.contains(IDB_STORE)) idb.createObjectStore(IDB_STORE);
+                };
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error || new Error('Gagal membuka database'));
+            });
         }
 
-        function defaultDb() {
-            return { version: 5, attendance: {}, transactions: [], manualPenalties: [], monthStatus: {} };
+        async function idbGet() {
+            const idb = await openAppDB();
+            return new Promise((resolve, reject) => {
+                const tx = idb.transaction(IDB_STORE, 'readonly');
+                const req = tx.objectStore(IDB_STORE).get(IDB_KEY);
+                req.onsuccess = () => resolve(req.result || null);
+                req.onerror = () => reject(req.error);
+                tx.oncomplete = () => idb.close();
+            });
         }
 
-        function normalizeDb(value) {
-            const data = value && typeof value === 'object' ? value : defaultDb();
-            if (!data.attendance) data.attendance = {};
-            if (!data.transactions) data.transactions = [];
-            if (!data.manualPenalties) data.manualPenalties = [];
-            if (!data.monthStatus) data.monthStatus = {};
-            if (!data.version) data.version = 5;
-            return data;
+        async function idbPut(value) {
+            const idb = await openAppDB();
+            return new Promise((resolve, reject) => {
+                const tx = idb.transaction(IDB_STORE, 'readwrite');
+                tx.objectStore(IDB_STORE).put(value, IDB_KEY);
+                tx.oncomplete = () => { idb.close(); resolve(); };
+                tx.onerror = () => { idb.close(); reject(tx.error); };
+            });
         }
 
-        async function startAuthenticatedApp(user) {
-            currentUser = user;
-            document.getElementById('account-email').textContent = user.email || '-';
+        function normalizeDb(data) {
+            if (!data || typeof data !== 'object') return { version: 5, attendance: {}, transactions: [], manualPenalties: [], monthStatus: {} };
+            return {
+                version: Math.max(5, Number(data.version) || 5),
+                attendance: data.attendance && typeof data.attendance === 'object' ? data.attendance : {},
+                transactions: Array.isArray(data.transactions) ? data.transactions : [],
+                manualPenalties: Array.isArray(data.manualPenalties) ? data.manualPenalties : [],
+                monthStatus: data.monthStatus && typeof data.monthStatus === 'object' ? data.monthStatus : {}
+            };
+        }
+
+        async function initApp() {
             await loadData();
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('app-container').classList.remove('hidden');
             document.getElementById('header-date').textContent = formatDate(new Date());
             generateMonthOptions('finance-month-filter');
             generateMonthOptions('recap-month-select');
@@ -698,172 +683,104 @@
             document.getElementById('finance-month-filter').value = getMonthString(new Date());
             document.getElementById('recap-month-select').value = getMonthString(new Date());
             document.getElementById('home-month-select').value = getMonthString(new Date());
-            renderDashboard();
-            renderCalendar();
-            renderFinanceList();
-            renderRecap();
-            renderTabungan();
+            renderDashboard(); renderCalendar(); renderFinanceList(); renderRecap(); renderTabungan();
+            updateStorageStatus();
+            registerPWA();
         }
 
-        async function initAuth() {
-            if (!SUPABASE_URL || SUPABASE_URL.includes('YOUR_') || !SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.includes('YOUR_')) {
-                showAuthError('Supabase belum dikonfigurasi. Isi SUPABASE_URL dan SUPABASE_ANON_KEY di file supabase-config.js.');
-                return;
-            }
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session?.user) {
-                await startAuthenticatedApp(session.user);
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.theme = 'light';
             } else {
-                document.getElementById('auth-screen').classList.remove('hidden');
+                html.classList.add('dark');
+                localStorage.theme = 'dark';
             }
-            authInitialized = true;
-
-            supabase.auth.onAuthStateChange((event, session) => {
-                setTimeout(async () => {
-                    if (!authInitialized) return;
-                    if (session?.user) {
-                        if (!currentUser || currentUser.id !== session.user.id) await startAuthenticatedApp(session.user);
-                    } else {
-                        currentUser = null;
-                        document.getElementById('app-container').classList.add('hidden');
-                        document.getElementById('auth-screen').classList.remove('hidden');
-                    }
-                }, 0);
-            });
-        }
-
-        function showAuthError(message) {
-            const el = document.getElementById('auth-error');
-            el.textContent = message;
-            el.classList.remove('hidden');
-            document.getElementById('auth-success').classList.add('hidden');
-        }
-
-        function showAuthSuccess(message) {
-            const el = document.getElementById('auth-success');
-            el.textContent = message;
-            el.classList.remove('hidden');
-            document.getElementById('auth-error').classList.add('hidden');
-        }
-
-        function clearAuthMessages() {
-            document.getElementById('auth-error').classList.add('hidden');
-            document.getElementById('auth-success').classList.add('hidden');
-        }
-
-        function toggleAuthMode() {
-            const login = document.getElementById('login-form');
-            const signup = document.getElementById('signup-form');
-            const toggle = document.getElementById('auth-toggle');
-            const forgot = document.getElementById('forgot-button');
-            clearAuthMessages();
-            const isLogin = !login.classList.contains('hidden');
-            login.classList.toggle('hidden', isLogin);
-            signup.classList.toggle('hidden', !isLogin);
-            forgot.classList.toggle('hidden', isLogin);
-            toggle.textContent = isLogin ? 'Sudah punya akun? Masuk' : 'Belum punya akun? Daftar';
-        }
-
-        function authBusy(buttonId, busy, text) {
-            const b = document.getElementById(buttonId);
-            b.disabled = busy;
-            b.classList.toggle('auth-loading', busy);
-            if (text) b.textContent = text;
-        }
-
-        async function handleLogin(e) {
-            e.preventDefault();
-            clearAuthMessages();
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value;
-            authBusy('login-button', true, 'Memproses...');
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
-            authBusy('login-button', false, 'Masuk');
-            if (error) showAuthError(error.message);
-        }
-
-        async function handleSignup(e) {
-            e.preventDefault();
-            clearAuthMessages();
-            const email = document.getElementById('signup-email').value.trim();
-            const password = document.getElementById('signup-password').value;
-            const password2 = document.getElementById('signup-password2').value;
-            if (password !== password2) return showAuthError('Password tidak sama.');
-            authBusy('signup-button', true, 'Membuat akun...');
-            const { data, error } = await supabase.auth.signUp({ email, password });
-            authBusy('signup-button', false, 'Buat Akun');
-            if (error) return showAuthError(error.message);
-            if (data.session) showAuthSuccess('Akun berhasil dibuat. Memuat aplikasi...');
-            else showAuthSuccess('Akun berhasil dibuat. Cek email untuk verifikasi, lalu kembali ke aplikasi dan login.');
-        }
-
-        async function handleForgotPassword() {
-            clearAuthMessages();
-            const email = document.getElementById('login-email').value.trim();
-            if (!email) return showAuthError('Masukkan email terlebih dahulu.');
-            const redirectTo = window.location.origin + window.location.pathname;
-            const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
-            if (error) showAuthError(error.message);
-            else showAuthSuccess('Link reset password sudah dikirim ke email.');
-        }
-
-        async function logout() {
-            const { error } = await supabase.auth.signOut();
-            if (error) showToast('Gagal keluar: ' + error.message);
         }
 
         async function loadData() {
-            const localKey = getUserStorageKey();
-            const oldRaw = localStorage.getItem(DB_KEY);
-            const userRaw = localStorage.getItem(localKey);
-            let localData = null;
-            try { if (userRaw) localData = normalizeDb(JSON.parse(userRaw)); } catch(e) {}
-            if (!localData && oldRaw) {
-                try { localData = normalizeDb(JSON.parse(oldRaw)); } catch(e) {}
-            }
+            try {
+                const stored = await idbGet();
+                if (stored) {
+                    db = normalizeDb(stored);
+                    localStorage.setItem(DB_KEY, JSON.stringify(db));
+                    return;
+                }
+            } catch (e) { console.warn('IndexedDB load gagal, memakai localStorage:', e); }
 
-            const { data, error } = await supabase
-                .from('user_app_data')
-                .select('data')
-                .eq('user_id', currentUser.id)
-                .maybeSingle();
-
-            if (error) {
-                console.error(error);
-                showAuthError('Login berhasil, tetapi database belum siap. Pastikan SQL Supabase sudah dijalankan.');
-                db = localData || defaultDb();
-                localStorage.setItem(localKey, JSON.stringify(db));
-                return;
-            }
-
-            if (data?.data) {
-                db = normalizeDb(data.data);
-                localStorage.setItem(localKey, JSON.stringify(db));
-            } else {
-                db = localData || defaultDb();
-                await persistCloudData();
+            const raw = localStorage.getItem(DB_KEY);
+            if (raw) {
+                try {
+                    db = normalizeDb(JSON.parse(raw));
+                    try { await idbPut(db); } catch (e) { console.warn('Migrasi IndexedDB gagal:', e); }
+                } catch(e) { console.error('Error loading DB', e); }
             }
         }
 
-        async function persistCloudData() {
-            if (!currentUser) return;
-            const payload = { user_id: currentUser.id, data: db, updated_at: new Date().toISOString() };
-            const { error } = await supabase.from('user_app_data').upsert(payload, { onConflict: 'user_id' });
-            if (error) {
-                console.error(error);
-                showToast('Data lokal tersimpan, tetapi sinkronisasi gagal');
-            }
-        }
-
-        function saveData() {
+        async function saveData() {
             db = normalizeDb(db);
-            localStorage.setItem(getUserStorageKey(), JSON.stringify(db));
-            persistCloudData();
+            const serialized = JSON.stringify(db);
+            localStorage.setItem(DB_KEY, serialized);
+            try { await idbPut(db); } catch (e) { console.warn('IndexedDB save gagal, localStorage tetap dipakai:', e); }
             renderDashboard();
             renderCalendar();
             renderFinanceList();
             renderRecap();
             renderTabungan();
+            updateStorageStatus();
+        }
+
+        async function requestPersistentStorage() {
+            try {
+                if (navigator.storage && navigator.storage.persist) {
+                    const granted = await navigator.storage.persist();
+                    showToast(granted ? 'Penyimpanan perangkat diamankan' : 'Browser belum memberikan penyimpanan persisten');
+                } else showToast('Browser tidak mendukung mode penyimpanan persisten');
+            } catch(e) { showToast('Penyimpanan aman tidak tersedia'); }
+            updateStorageStatus();
+        }
+
+        async function updateStorageStatus() {
+            const status = document.getElementById('pwa-storage-status');
+            const badge = document.getElementById('pwa-status-badge');
+            if (!status || !badge) return;
+            let persisted = false;
+            try { persisted = !!(navigator.storage && navigator.storage.persisted && await navigator.storage.persisted()); } catch(e) {}
+            const online = navigator.onLine !== false;
+            status.textContent = persisted ? 'IndexedDB aktif • penyimpanan persisten' : 'IndexedDB aktif • tersimpan di perangkat';
+            badge.textContent = online ? 'ONLINE' : 'OFFLINE';
+            badge.className = `text-[9px] font-black px-2.5 py-1 rounded-full ${online ? 'bg-bloom-mint/30 text-bloom-mintText' : 'bg-bloom-cream/40 text-bloom-creamText'}`;
+        }
+
+        function registerPWA() {
+            if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.warn('Service worker gagal:', err));
+            }
+            window.addEventListener('beforeinstallprompt', (event) => {
+                event.preventDefault();
+                deferredInstallPrompt = event;
+                const btn = document.getElementById('pwa-install-btn');
+                if (btn) btn.classList.remove('hidden');
+            });
+            window.addEventListener('appinstalled', () => {
+                deferredInstallPrompt = null;
+                const btn = document.getElementById('pwa-install-btn');
+                if (btn) btn.classList.add('hidden');
+                showToast('Aplikasi berhasil di-install');
+            });
+            window.addEventListener('online', updateStorageStatus);
+            window.addEventListener('offline', updateStorageStatus);
+        }
+
+        async function installPWA() {
+            if (!deferredInstallPrompt) {
+                showDialog('Install PWA', 'Di iPhone: buka di Safari → Bagikan → Tambahkan ke Layar Utama. Di Android/Chrome/PC, gunakan menu Install/Tambahkan ke layar utama jika tersedia.');
+                return;
+            }
+            deferredInstallPrompt.prompt();
+            await deferredInstallPrompt.userChoice;
+            deferredInstallPrompt = null;
         }
 
         function getTodayString() { return formatDateString(new Date()); }
@@ -1644,7 +1561,7 @@
             });
         }
 
-        window.addEventListener('load', () => initAuth());
+        window.onload = initApp;
     </script>
 </body>
 </html>
